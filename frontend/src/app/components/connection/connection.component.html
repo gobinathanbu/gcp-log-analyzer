@@ -1,0 +1,112 @@
+<div class="connection-container">
+  <div class="connection-card">
+    <div class="card-header">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h1>GCP Log Analyzer</h1>
+        <p class="subtitle">Monitor batch failures, API errors & performance in real-time</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- Error Message -->
+      <div class="alert alert-error" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Success Message -->
+      <div class="alert alert-success" *ngIf="connectionResult?.success">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>{{ connectionResult!.message }}</span>
+      </div>
+
+      <form (ngSubmit)="connect()" class="connection-form">
+        <div class="form-group">
+          <label for="projectId">GCP Project ID</label>
+          <div class="input-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            <input
+              type="text"
+              id="projectId"
+              [(ngModel)]="projectId"
+              name="projectId"
+              placeholder="e.g. my-gcp-project-id"
+              [disabled]="isConnecting"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="serviceAccount">Service Account Key (JSON) <span class="optional">Optional</span></label>
+          <div class="file-upload" [class.has-file]="serviceAccountFile">
+            <input
+              type="file"
+              id="serviceAccount"
+              (change)="onFileSelected($event)"
+              accept=".json"
+              [disabled]="isConnecting"
+            />
+            <div class="file-upload-content">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span *ngIf="!serviceAccountFile">Drop your service account JSON here or click to browse</span>
+              <span *ngIf="serviceAccountFile" class="file-name">{{ serviceAccountFile.name }}</span>
+            </div>
+          </div>
+          <p class="help-text">Leave empty to use Application Default Credentials (ADC)</p>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary" [disabled]="isConnecting">
+            <span class="spinner" *ngIf="isConnecting"></span>
+            <span *ngIf="!isConnecting">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                <polyline points="10 17 15 12 10 7"/>
+                <line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+              Connect to GCP
+            </span>
+            <span *ngIf="isConnecting">Connecting...</span>
+          </button>
+
+          <button type="button" class="btn btn-secondary" (click)="loadDemo()" [disabled]="isConnecting">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            View Demo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Available Services (shown after connection) -->
+  <div class="services-preview" *ngIf="connectionResult?.success && connectionResult!.available_services.length > 0">
+    <h3>Detected Microservices</h3>
+    <div class="service-tags">
+      <span class="service-tag" *ngFor="let service of connectionResult!.available_services">
+        {{ service }}
+      </span>
+    </div>
+  </div>
+</div>

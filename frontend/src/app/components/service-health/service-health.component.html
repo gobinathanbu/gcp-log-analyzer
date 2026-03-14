@@ -1,0 +1,32 @@
+<div class="health-grid">
+    <div class="health-card" *ngFor="let svc of services" [class]="getStatusClass(svc.status)">
+        <div class="health-header">
+            <div class="status-dot" [class]="getStatusClass(svc.status)"></div>
+            <h3>{{ svc.service_name }}</h3>
+            <span class="status-label" [class]="getStatusClass(svc.status)">{{ svc.status }}</span>
+        </div>
+
+        <div class="health-metrics">
+            <div class="metric">
+                <span class="metric-value">{{ svc.total_requests | number }}</span>
+                <span class="metric-label">Total Requests</span>
+            </div>
+            <div class="metric">
+                <span class="metric-value error-text">{{ svc.error_count | number }}</span>
+                <span class="metric-label">Errors</span>
+            </div>
+            <div class="metric">
+                <span class="metric-value">{{ svc.avg_latency_ms | number:'1.0-0' }}ms</span>
+                <span class="metric-label">Avg Latency</span>
+            </div>
+            <div class="metric">
+                <span class="metric-value">{{ svc.error_rate }}%</span>
+                <span class="metric-label">Error Rate</span>
+            </div>
+        </div>
+
+        <div class="health-bar-wrapper">
+            <div class="health-bar" [style.width.%]="getHealthWidth(svc)" [class]="getStatusClass(svc.status)"></div>
+        </div>
+    </div>
+</div>

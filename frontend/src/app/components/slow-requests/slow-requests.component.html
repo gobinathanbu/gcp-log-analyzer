@@ -1,0 +1,64 @@
+<div class="slow-container">
+    <div class="section-header">
+        <h2>Slow Requests (&gt; 2 seconds)</h2>
+        <span class="log-count">{{ slowLogs.length }} slow requests found</span>
+    </div>
+
+    <div class="slow-entry" *ngFor="let log of slowLogs; let i = index" (click)="toggleExpand(i)">
+
+        <div class="slow-header">
+            <div class="latency-indicator" [class]="getLatencySeverity(log.latency_ms)">
+                <span class="latency-value">{{ formatLatency(log.latency_ms) }}</span>
+            </div>
+
+            <div class="slow-info">
+                <div class="slow-meta">
+                    <span class="service-name">{{ log.service_name }}</span>
+                    <span class="timestamp">{{ formatTime(log.timestamp) }}</span>
+                </div>
+                <p class="slow-message">{{ log.message.substring(0, 150) }}{{ log.message.length > 150 ? '...' : '' }}
+                </p>
+                <div class="latency-bar-wrapper">
+                    <div class="latency-bar" [class]="getLatencySeverity(log.latency_ms)"
+                        [style.width.%]="getLatencyBarWidth(log.latency_ms)"></div>
+                </div>
+            </div>
+
+            <div class="root-cause-tag" *ngIf="log.root_cause && log.root_cause !== 'Unknown Root Cause'">
+                {{ log.root_cause }}
+            </div>
+        </div>
+
+        <div class="slow-details" *ngIf="expandedIndex === i">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Latency</span>
+                    <span class="detail-value latency">{{ formatLatency(log.latency_ms) }}</span>
+                </div>
+                <div class="detail-item" *ngIf="log.http_status">
+                    <span class="detail-label">HTTP Status</span>
+                    <span class="detail-value">{{ log.http_status }}</span>
+                </div>
+                <div class="detail-item" *ngIf="log.trace_id">
+                    <span class="detail-label">Trace ID</span>
+                    <span class="detail-value mono">{{ log.trace_id }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Root Cause</span>
+                    <span class="detail-value root-cause">{{ log.root_cause }}</span>
+                </div>
+            </div>
+            <div class="full-message">
+                <h4>Full Details</h4>
+                <pre>{{ log.message }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" *ngIf="slowLogs.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        <p>No slow requests detected. All APIs responded within the threshold!</p>
+    </div>
+</div>

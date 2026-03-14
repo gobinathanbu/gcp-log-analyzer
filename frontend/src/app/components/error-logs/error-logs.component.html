@@ -1,0 +1,60 @@
+<div class="error-logs-container">
+    <div class="section-header">
+        <h2>API Error Logs (500 / 502)</h2>
+        <span class="log-count">{{ errorLogs.length }} errors found</span>
+    </div>
+
+    <div class="log-entry" *ngFor="let log of errorLogs; let i = index" (click)="toggleExpand(i)">
+
+        <div class="log-header">
+            <div class="severity-badge" [class]="getSeverityClass(log.severity)">
+                {{ log.severity }}
+            </div>
+            <div class="log-info">
+                <div class="log-meta">
+                    <span class="service-name">{{ log.service_name }}</span>
+                    <span class="category-badge">{{ getCategoryLabel(log.category) }}</span>
+                    <span class="timestamp">{{ formatTime(log.timestamp) }}</span>
+                </div>
+                <p class="log-message">{{ log.message.substring(0, 120) }}{{ log.message.length > 120 ? '...' : '' }}
+                </p>
+            </div>
+            <div class="root-cause-tag" *ngIf="log.root_cause && log.root_cause !== 'Unknown Root Cause'">
+                {{ log.root_cause }}
+            </div>
+        </div>
+
+        <div class="log-details" *ngIf="expandedIndex === i">
+            <div class="detail-grid">
+                <div class="detail-item" *ngIf="log.http_status">
+                    <span class="detail-label">HTTP Status</span>
+                    <span class="detail-value status-code">{{ log.http_status }}</span>
+                </div>
+                <div class="detail-item" *ngIf="log.latency_ms">
+                    <span class="detail-label">Latency</span>
+                    <span class="detail-value">{{ log.latency_ms | number:'1.0-0' }}ms</span>
+                </div>
+                <div class="detail-item" *ngIf="log.trace_id">
+                    <span class="detail-label">Trace ID</span>
+                    <span class="detail-value mono">{{ log.trace_id }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Root Cause</span>
+                    <span class="detail-value root-cause">{{ log.root_cause }}</span>
+                </div>
+            </div>
+            <div class="full-message">
+                <h4>Full Error Message</h4>
+                <pre>{{ log.message }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" *ngIf="errorLogs.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <p>No API errors found. All services are healthy!</p>
+    </div>
+</div>

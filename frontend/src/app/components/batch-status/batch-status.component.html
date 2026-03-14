@@ -1,0 +1,64 @@
+<div class="batch-list">
+    <div class="section-header">
+        <h2>Midnight Batch Job Results</h2>
+        <span class="batch-count">{{ batchStatuses.length }} jobs found</span>
+    </div>
+
+    <div class="batch-card" *ngFor="let batch of batchStatuses; let i = index" [class]="batch.status.toLowerCase()"
+        (click)="toggleExpand(i)">
+
+        <div class="batch-header">
+            <span class="batch-icon">{{ getStatusIcon(batch.status) }}</span>
+            <div class="batch-info">
+                <h3>{{ batch.job_name }}</h3>
+                <span class="batch-time">Scheduled: {{ formatTime(batch.scheduled_time) }}</span>
+            </div>
+            <div class="batch-meta">
+                <span class="batch-status-label" [class]="batch.status.toLowerCase()">{{ batch.status }}</span>
+                <span class="batch-duration" *ngIf="batch.start_time && batch.end_time">
+                    {{ getDuration(batch.start_time, batch.end_time) }}
+                </span>
+            </div>
+            <div class="expand-icon" [class.expanded]="expandedIndex === i">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="batch-details" *ngIf="expandedIndex === i">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Start Time</span>
+                    <span class="detail-value">{{ formatTime(batch.start_time) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">End Time</span>
+                    <span class="detail-value">{{ formatTime(batch.end_time) }}</span>
+                </div>
+                <div class="detail-item" *ngIf="batch.records_processed !== null">
+                    <span class="detail-label">Records Processed</span>
+                    <span class="detail-value">{{ batch.records_processed | number }}</span>
+                </div>
+                <div class="detail-item" *ngIf="batch.root_cause">
+                    <span class="detail-label">Root Cause</span>
+                    <span class="detail-value root-cause">{{ batch.root_cause }}</span>
+                </div>
+            </div>
+
+            <div class="error-block" *ngIf="batch.error_message">
+                <h4>Error Details</h4>
+                <pre>{{ batch.error_message }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" *ngIf="batchStatuses.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <p>No batch jobs found in the selected time period.</p>
+    </div>
+</div>
