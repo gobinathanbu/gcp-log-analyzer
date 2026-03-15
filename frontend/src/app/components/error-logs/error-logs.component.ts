@@ -38,4 +38,22 @@ export class ErrorLogsComponent {
             default: return category;
         }
     }
+
+    formatClueMessage(msg: string): string {
+        // Splits the clue message from the python backend (Label \n→ Details)
+        // into HTML for proper styling
+        if (!msg) return '';
+        const parts = msg.split('\n→ ');
+        if (parts.length === 2) {
+            return `<strong>${this.escapeHtml(parts[0])}</strong><br/><span class="clue-detail">→ ${this.escapeHtml(parts[1])}</span>`;
+        }
+        return this.escapeHtml(msg);
+    }
+
+    private escapeHtml(text: string): string {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
 }

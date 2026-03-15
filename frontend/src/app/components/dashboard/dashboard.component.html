@@ -2,6 +2,13 @@
     <!-- ── Top Bar ──────────────────────────────────────────── -->
     <header class="top-bar">
         <div class="top-bar-left">
+            <button class="btn-back" (click)="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+            </button>
             <div class="logo-mark">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2">
@@ -12,52 +19,32 @@
             </div>
             <div>
                 <h1>GCP Log Analyzer</h1>
-                <span class="project-badge" *ngIf="data">
+                <span class="project-badge" *ngIf="dashboardData">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" width="12" height="12">
                         <path
                             d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                     </svg>
-                    {{ data.project_id }}
+                    {{ dashboardData.project_id }}
                 </span>
             </div>
         </div>
         <div class="top-bar-right">
-            <span class="demo-badge" *ngIf="isDemo">DEMO MODE</span>
-            <span class="last-refreshed" *ngIf="lastRefreshed">Updated {{ lastRefreshed }}</span>
-            <div class="hours-selector">
-                <select [(ngModel)]="hoursBack" (change)="refresh()">
-                    <option [value]="1">Last 1 hour</option>
-                    <option [value]="6">Last 6 hours</option>
-                    <option [value]="12">Last 12 hours</option>
-                    <option [value]="24">Last 24 hours</option>
-                    <option [value]="48">Last 48 hours</option>
-                    <option [value]="72">Last 72 hours</option>
-                    <option [value]="168">Last 7 days</option>
-                </select>
-            </div>
-            <button class="btn-refresh" (click)="refresh()">
+            <span class="demo-badge" *ngIf="mode === 'demo'">DEMO MODE</span>
+            <span class="upload-badge" *ngIf="mode === 'uploaded'">UPLOADED FILE</span>
+            <button class="btn-refresh" (click)="goBack()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2">
-                    <polyline points="23 4 23 10 17 10" />
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
-                Refresh
+                Upload New File
             </button>
         </div>
     </header>
 
-    <!-- ── Error Banner ─────────────────────────────────────── -->
-    <div class="error-banner" *ngIf="errorMessage">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="15" y1="9" x2="9" y2="15" />
-            <line x1="9" y1="9" x2="15" y2="15" />
-        </svg>
-        {{ errorMessage }}
-    </div>
-
-    <div class="dashboard-content" *ngIf="data">
+    <div class="dashboard-content" *ngIf="dashboardData">
         <!-- ── Summary Cards ────────────────────────────────────── -->
         <div class="summary-grid">
             <div class="summary-card">
@@ -69,7 +56,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.total_log_entries | number }}</span>
+                    <span class="summary-value">{{ dashboardData.total_log_entries | number }}</span>
                     <span class="summary-label">Total Events</span>
                 </div>
             </div>
@@ -84,7 +71,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.total_errors | number }}</span>
+                    <span class="summary-value">{{ dashboardData.total_errors | number }}</span>
                     <span class="summary-label">Total Errors</span>
                 </div>
             </div>
@@ -98,7 +85,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.batch_failures }}</span>
+                    <span class="summary-value">{{ dashboardData.batch_failures }}</span>
                     <span class="summary-label">Batch Failures</span>
                 </div>
             </div>
@@ -114,7 +101,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.api_500_errors | number }}</span>
+                    <span class="summary-value">{{ dashboardData.api_500_errors | number }}</span>
                     <span class="summary-label">HTTP 500 Errors</span>
                 </div>
             </div>
@@ -130,7 +117,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.api_502_errors | number }}</span>
+                    <span class="summary-value">{{ dashboardData.api_502_errors | number }}</span>
                     <span class="summary-label">HTTP 502 Errors</span>
                 </div>
             </div>
@@ -144,7 +131,7 @@
                     </svg>
                 </div>
                 <div class="summary-data">
-                    <span class="summary-value">{{ data.slow_requests }}</span>
+                    <span class="summary-value">{{ dashboardData.slow_requests }}</span>
                     <span class="summary-label">Slow Requests (&gt;2s)</span>
                 </div>
             </div>
@@ -169,7 +156,8 @@
                     <path d="M16 7V5a4 4 0 0 0-8 0v2" />
                 </svg>
                 Batch Jobs
-                <span class="tab-badge danger" *ngIf="data.batch_failures > 0">{{ data.batch_failures }}</span>
+                <span class="tab-badge danger" *ngIf="dashboardData.batch_failures > 0">{{ dashboardData.batch_failures
+                    }}</span>
             </button>
             <button [class.active]="activeTab === 'errors'" (click)="setTab('errors')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -179,7 +167,8 @@
                     <line x1="9" y1="9" x2="15" y2="15" />
                 </svg>
                 API Errors
-                <span class="tab-badge danger" *ngIf="data.total_errors > 0">{{ data.total_errors }}</span>
+                <span class="tab-badge danger" *ngIf="dashboardData.total_errors > 0">{{ dashboardData.total_errors
+                    }}</span>
             </button>
             <button [class.active]="activeTab === 'slow'" (click)="setTab('slow')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -188,41 +177,30 @@
                     <polyline points="12 6 12 12 16 14" />
                 </svg>
                 Slow Requests
-                <span class="tab-badge warning" *ngIf="data.slow_requests > 0">{{ data.slow_requests }}</span>
+                <span class="tab-badge warning" *ngIf="dashboardData.slow_requests > 0">{{ dashboardData.slow_requests
+                    }}</span>
             </button>
         </nav>
 
         <!-- ── Tab: Overview ──────────────────────────────────── -->
         <div class="tab-content" *ngIf="activeTab === 'overview'">
-            <app-service-health [services]="data.services"></app-service-health>
+            <app-service-health [services]="dashboardData.services"></app-service-health>
 
             <!-- Charts Row -->
             <div class="charts-row">
                 <!-- Hourly Error Trend -->
                 <div class="chart-card">
                     <h3 class="chart-title">Error Trend (Hourly)</h3>
-                    <div class="bar-chart">
-                        <div class="bar-wrapper" *ngFor="let item of data.hourly_error_trend; let i = index">
-                            <div class="bar-tooltip">{{ item.error_count }} errors</div>
-                            <div class="bar" [style.height.%]="getHourlyChartHeight(item.error_count)"
-                                [style.background]="getBarColor(item.error_count)"></div>
-                            <span class="bar-label" *ngIf="i % 3 === 0">{{ getHourLabel(item.hour) }}</span>
-                        </div>
+                    <div class="canvas-wrapper">
+                        <canvas #errorChart></canvas>
                     </div>
                 </div>
 
                 <!-- Root Cause Distribution -->
                 <div class="chart-card">
                     <h3 class="chart-title">Root Cause Analysis</h3>
-                    <div class="root-cause-chart">
-                        <div class="rc-row" *ngFor="let rc of data.root_cause_distribution; let i = index">
-                            <div class="rc-label">{{ rc.root_cause }}</div>
-                            <div class="rc-bar-wrapper">
-                                <div class="rc-bar" [style.width.%]="getRootCauseChartWidth(rc.count)"
-                                    [style.background]="getRootCauseColor(i)"></div>
-                            </div>
-                            <span class="rc-count">{{ rc.count }}</span>
-                        </div>
+                    <div class="canvas-wrapper">
+                        <canvas #rootCauseChart></canvas>
                     </div>
                 </div>
             </div>
@@ -230,17 +208,17 @@
 
         <!-- ── Tab: Batch Jobs ────────────────────────────────── -->
         <div class="tab-content" *ngIf="activeTab === 'batches'">
-            <app-batch-status [batchStatuses]="data.batch_statuses"></app-batch-status>
+            <app-batch-status [batchStatuses]="dashboardData.batch_statuses"></app-batch-status>
         </div>
 
         <!-- ── Tab: API Errors ────────────────────────────────── -->
         <div class="tab-content" *ngIf="activeTab === 'errors'">
-            <app-error-logs [errorLogs]="data.error_logs"></app-error-logs>
+            <app-error-logs [errorLogs]="dashboardData.error_logs"></app-error-logs>
         </div>
 
         <!-- ── Tab: Slow Requests ─────────────────────────────── -->
         <div class="tab-content" *ngIf="activeTab === 'slow'">
-            <app-slow-requests [slowLogs]="data.slow_request_logs"></app-slow-requests>
+            <app-slow-requests [slowLogs]="dashboardData.slow_request_logs"></app-slow-requests>
         </div>
     </div>
 </div>
@@ -249,7 +227,7 @@
 <ng-template #loadingTpl>
     <div class="loading-screen">
         <div class="loading-spinner"></div>
-        <p>Fetching logs from GCP Cloud Logging...</p>
-        <span class="loading-sub">Analyzing batch failures, API errors & latency</span>
+        <p>Analyzing your log data...</p>
+        <span class="loading-sub">Detecting batch failures, API errors & latency issues</span>
     </div>
 </ng-template>

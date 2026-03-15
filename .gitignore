@@ -1,3 +1,10 @@
+# ── Java / Maven ───────────────────────────────────────
+backend-java/target/
+backend-java/*.iml
+*.class
+*.jar
+*.war
+
 # ── Python ──────────────────────────────────────────────
 __pycache__/
 *.py[cod]

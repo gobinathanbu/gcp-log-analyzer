@@ -30,6 +30,14 @@ export interface BatchStatus {
     root_cause?: string;
 }
 
+export interface ContextClue {
+    timestamp: string;
+    clue_type: string;
+    service_name: string;
+    message: string;
+    severity: string;
+}
+
 export interface LogEntry {
     timestamp: string;
     service_name: string;
@@ -42,6 +50,7 @@ export interface LogEntry {
     trace_id?: string;
     log_name?: string;
     resource_type?: string;
+    context_clues?: ContextClue[];
 }
 
 export interface HourlyTrend {

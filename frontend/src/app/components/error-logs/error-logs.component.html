@@ -16,11 +16,30 @@
                     <span class="category-badge">{{ getCategoryLabel(log.category) }}</span>
                     <span class="timestamp">{{ formatTime(log.timestamp) }}</span>
                 </div>
-                <p class="log-message">{{ log.message.substring(0, 120) }}{{ log.message.length > 120 ? '...' : '' }}
-                </p>
+
+                <!-- Immediate Root Cause Visibility -->
+                <div class="exact-root-cause" *ngIf="log.root_cause && log.root_cause !== 'Unknown Root Cause'">
+                    <span class="rc-label">🚨 Root Cause:</span> {{ log.root_cause }}
+                </div>
+
+                <p class="log-message">{{ log.message.substring(0, 150) }}{{ log.message.length > 150 ? '...' : '' }}</p>
+
+                <!-- Immediate Context Clues Visibility for Manager -->
+                <div class="immediate-context-clues" *ngIf="log.context_clues && log.context_clues.length > 0">
+                    <h4 class="context-heading">🔍 Deep Diagnostics (Correlated Events ±5 mins):</h4>
+                    <div class="mini-clue-list">
+                        <div class="mini-clue-item" *ngFor="let clue of log.context_clues">
+                            <span class="clue-tag" [attr.data-type]="clue.clue_type">{{ clue.clue_type.replace('_', ' ') }}</span>
+                            <span class="clue-service">[{{ clue.service_name }}]</span>
+                            <span class="clue-message" [innerHTML]="formatClueMessage(clue.message)"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="root-cause-tag" *ngIf="log.root_cause && log.root_cause !== 'Unknown Root Cause'">
-                {{ log.root_cause }}
+            
+            <div class="expand-indicator">
+                <svg *ngIf="expandedIndex !== i" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg *ngIf="expandedIndex === i" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
             </div>
         </div>
 
@@ -38,13 +57,10 @@
                     <span class="detail-label">Trace ID</span>
                     <span class="detail-value mono">{{ log.trace_id }}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="detail-label">Root Cause</span>
-                    <span class="detail-value root-cause">{{ log.root_cause }}</span>
-                </div>
             </div>
+
             <div class="full-message">
-                <h4>Full Error Message</h4>
+                <h4>Full Error Dump</h4>
                 <pre>{{ log.message }}</pre>
             </div>
         </div>

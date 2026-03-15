@@ -74,6 +74,45 @@
     letter-spacing: 0.05em;
 }
 
+.upload-badge {
+    padding: 4px 10px;
+    background: linear-gradient(135deg, var(--success), #06b6d4);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+}
+
+.btn-back {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.btn-back svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-back:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.canvas-wrapper {
+    width: 100%;
+    min-height: 200px;
+}
+
 .last-refreshed {
     font-size: 0.75rem;
     color: var(--text-muted);

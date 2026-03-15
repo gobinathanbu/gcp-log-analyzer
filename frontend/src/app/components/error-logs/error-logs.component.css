@@ -111,17 +111,61 @@
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-.root-cause-tag {
-    font-size: 0.68rem;
-    padding: 4px 10px;
+.exact-root-cause {
+    font-size: 0.8rem;
+    padding: 6px 10px;
     background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-left: 3px solid var(--danger);
     color: var(--danger);
-    border-radius: 8px;
-    white-space: nowrap;
-    font-weight: 600;
-    flex-shrink: 0;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 6px;
 }
+
+.rc-label {
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+.immediate-context-clues {
+    margin-top: 10px;
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.context-heading {
+    font-size: 0.75rem;
+    color: var(--primary-light);
+    margin: 0 0 6px 0;
+    font-weight: 600;
+}
+
+.mini-clue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mini-clue-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-tertiary);
+    padding: 6px 8px;
+    border-radius: 6px;
+    flex-wrap: wrap;
+}
+
+.expand-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    padding-top: 4px;
+}
+
 
 /* Expanded Details */
 .log-details {
@@ -196,6 +240,99 @@
     margin: 0;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     line-height: 1.6;
+}
+
+/* Context Clues */
+.context-clues {
+    margin-top: 1.5rem;
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem;
+}
+
+.context-clues h4 {
+    font-size: 0.8rem;
+    color: var(--primary-light);
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.clue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-left: 2px solid rgba(99, 102, 241, 0.2);
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+}
+
+.clue-item {
+    position: relative;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.clue-item::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 3px var(--card-bg);
+}
+
+.clue-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.clue-service {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.clue-tag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    text-transform: uppercase;
+}
+
+.clue-tag[data-type="POD_RESTART"],
+.clue-tag[data-type="DEPLOYMENT"] {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+}
+
+.clue-message {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    width: 100%;
+    margin-top: 0.25rem;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+::ng-deep .clue-detail {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    opacity: 0.8;
 }
 
 /* Empty state */

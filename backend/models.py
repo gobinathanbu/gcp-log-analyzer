@@ -65,6 +65,15 @@ class RootCause(str, Enum):
 
 # ── Response Models ─────────────────────────────────────────────
 
+class ContextClue(BaseModel):
+    """A nearby log event that helps explain why an error occurred."""
+    timestamp: str
+    clue_type: str  # e.g. "POD_RESTART", "DB_DOWN", "OOM_KILL", "HEALTH_CHECK_FAIL"
+    service_name: str
+    message: str
+    severity: str
+
+
 class LogEntry(BaseModel):
     """A single processed log entry."""
     timestamp: str
@@ -78,6 +87,7 @@ class LogEntry(BaseModel):
     trace_id: Optional[str] = None
     log_name: Optional[str] = None
     resource_type: Optional[str] = None
+    context_clues: list[ContextClue] = []
 
 
 class ServiceHealth(BaseModel):
